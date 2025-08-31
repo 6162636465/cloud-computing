@@ -45,7 +45,7 @@ docker compose version
 
 ``` 
 - **steam deck windows**
-  - El frontend (Pi) se comunica con el backend (Deck) mediante la IP LAN de la Máquina A y el puerto 8000.
+
 ```bash
 # en PowerShell:
 wsl --install
