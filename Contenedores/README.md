@@ -118,3 +118,4 @@ docker run --rm --name sender `
 En la Pi, con docker logs -f receiver, verás:
 
 ![explicacion imagen](../Imagenes/ConexionDispositivos.png)
+
