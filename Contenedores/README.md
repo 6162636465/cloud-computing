@@ -64,3 +64,57 @@ docker compose version
 docker run --rm hello-world
 
 ``` 
+## 2.- Conexión (Deck ↔ Pi por LAN)
+- **2.1. Obtener la IP de la Raspberry Pi (Kali)**
+
+```bash
+# IPs asignadas (rápido)
+hostname -I
+
+# Wi-Fi (wlan0) o Ethernet (eth0), según uses:
+ip -4 addr show wlan0 | sed -n 's/ *inet \([0-9.]*\).*/\1/p'
+ip -4 addr show eth0  | sed -n 's/ *inet \([0-9.]*\).*/\1/p'
+
+# Ver ruta por defecto (muestra la IP de origen “src …”)
+ip route | head -n1
+``` 
+- **2.2. Levantar el receptor en la Raspberry Pi**
+
+```bash
+# construir imagen
+docker build -t lan-receiver:1 .
+
+# recrear contenedor y publicar el puerto a la LAN
+docker rm -f receiver 2>/dev/null || true
+docker run -d --name receiver -p 5000:5000 --restart unless-stopped lan-receiver:1
+
+# comprobar
+docker ps --filter name=receiver         # debe mostrar 0.0.0.0:5000->5000
+ss -tulpn | grep ':5000'                 # debe estar en LISTEN
+curl http://localhost:5000/health        # {"status":"ok"}
+docker logs -f receiver                  # verás los mensajes recibidos
+
+``` 
+- **2.3. Levantar el emisor en el Steam Deck (Windows)**
+
+```bash
+ping <192.168.1.120>
+Test-NetConnection <192.168.1.120> -Port 5000
+curl.exe http://<192.168.1.120>:5000/health
+``` 
+Construir y enviar mensaje (PowerShell):
+
+```bash
+# construir imagen (una vez)
+docker build -t lan-sender:1 .
+
+# ejecutar (NO hace falta reconstruir para cambiar IP o texto)
+docker run --rm --name sender `
+  -e TARGET_HOST=<IP_PI> `
+  -e TARGET_PORT=5000 `
+  -e MESSAGE="¡Hola Pi, te habla el Deck!" `
+  lan-sender:1
+``` 
+En la Pi, con docker logs -f receiver, verás:
+
+![explicacion imagen](../Imagenes/ConexionDispositivos.png)
