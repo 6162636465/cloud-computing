@@ -119,3 +119,57 @@ En la Pi, con docker logs -f receiver, verás:
 
 ![explicacion imagen](../Imagenes/ConexionDispositivos.png)
 
+## 3.- Arquitectura y conexión de contenedores
+- **Máquina A – Steam Deck (Windows + Docker Desktop)**
+
+![explicacion imagen](../Imagenes/ContenedorDeckCoriendo.png)
+
+- **todo-db (PostgreSQL 16, imagen postgres:16-alpine)**
+  - Rol: persistencia de tareas.  
+  - No expone puertos al host; solo es accesible desde el backend por la red interna de Docker.
+  - Volumen: pg_data:/var/lib/postgresql/data para que los datos sobrevivan a reinicios.
+  - Healthcheck con pg_isready.
+- **todo-backend (FastAPI + Uvicorn)**
+  - Rol: API REST (CRUD de To-Dos) y validación de negocio.
+  - Conexión a BD vía DATABASE_URL=postgresql+psycopg2://…@db:5432/todo_db (hostname db = servicio de la BD).
+  - Expone puerto 8000 al host/LAN (- "8000:8000").
+  - CORS habilitado para el origen del frontend (CORS_ORIGINS=http://<IP_PI>:5173).
+  - Endpoints: /health, /todos (GET/POST), /todos/{id} (PUT/DELETE).
+- **Máquina B – Raspberry Pi 4 (Kali + Docker)**
+
+![explicacion imagen](../Imagenes/RaspheryCoriendoPagina.png)
+
+- **todo-frontend (React + Vite, servido por Nginx)**
+  - Rol: interfaz web.  
+  - Durante el build se inyecta VITE_API_URL="http://<IP_DECK>:8000".
+  - Nginx sirve el build estático y hace fallback SPA (try_files) + mime.types correcto.
+  - Expone puerto 5173 al host/LAN (- "5173:80").
+- **Flujo de red**
+  - El frontend (Pi) habla por HTTP → http://<IP_DECK>:8000 (LAN).
+  - El backend (Deck) habla con la BD por la red interna de Docker (hostname db, puerto 5432).
+  - No hay comunicación directa entre frontend y BD.
+
+## 4.- Correr contenedores
+- **Deck (backend + DB):**
+```bash
+docker compose up -d --build
+CORS_ORIGINS=http://<192.168.1.120>:5173
+curl.exe http://localhost:8000/health   # {"status":"ok"}
+``` 
+
+- **Pi (frontend):**
+
+```bash
+docker compose build --no-cache
+docker compose up -d
+``` 
+
+- **Tests**
+
+```bash
+
+curl http://<IP_DECK>:8000/health
+
+curl.exe http://<IP_PI>:5173
+
+``` 
