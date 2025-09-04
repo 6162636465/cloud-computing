@@ -141,6 +141,11 @@ En la Pi, con docker logs -f receiver, verás:
 - Backend (Deck) → DB (Deck) por **red interna de Docker**: `db:5432`.
 - No hay acceso directo Frontend → DB.
 
+**Prueba**
+
+<video src="../Imagenes/RaspheryPrueba.mp4" controls width="640">
+  Tu navegador no soporta video HTML5.
+</video>
 
 ## 4.- Correr contenedores
 - **Deck (backend + DB):**
@@ -210,3 +215,7 @@ Durante el desarrollo salieron varios tropiezos típicos al trabajar con Docker 
       location / { try_files $uri /index.html; }
     }
   }
+### 3) red Local
+en red local no puedes enviar informacion del rasphery a la deck por que la comunicacion aparentemente es unidireccional en cambio en red
+normal router si permite
+
