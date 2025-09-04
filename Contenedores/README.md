@@ -143,7 +143,7 @@ En la Pi, con docker logs -f receiver, verás:
 
 **Prueba**
 
-[▶️ Ver video](Imagenes/RaspheryPrueba.mp4)
+[▶️ Ver video](../Imagenes/RaspheryPrueba.mp4)
 
 
 ## 4.- Correr contenedores
