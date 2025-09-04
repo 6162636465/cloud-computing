@@ -149,6 +149,7 @@ docker compose up -d --build
 CORS_ORIGINS=http://<192.168.1.120>:5173
 curl.exe http://localhost:8000/health   # {"status":"ok"}
 ``` 
+![explicacion imagen](../Imagenes/ContenedorDeckCoriendo.png)
 
 - **Pi (frontend):**
 
@@ -156,6 +157,7 @@ curl.exe http://localhost:8000/health   # {"status":"ok"}
 docker compose build --no-cache
 docker compose up -d
 ``` 
+![explicacion imagen](../Imagenes/RaspheryCoriendoPagina.png)
 
 - **Tests**
 
