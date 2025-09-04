@@ -143,9 +143,8 @@ En la Pi, con docker logs -f receiver, verás:
 
 **Prueba**
 
-<video src="../Imagenes/RaspheryPrueba.mp4" controls width="640">
-  Tu navegador no soporta video HTML5.
-</video>
+[▶️ Ver video](Imagenes/RaspheryPrueba.mp4)
+
 
 ## 4.- Correr contenedores
 - **Deck (backend + DB):**
